@@ -22,6 +22,7 @@
 // THE SOFTWARE.
 
 #import "ECPercentDrivenInteractiveTransition.h"
+#import "ECSlidingConstants.h"
 
 @interface ECPercentDrivenInteractiveTransition ()
 @property (nonatomic, assign) id<UIViewControllerContextTransitioning> transitionContext;
@@ -64,7 +65,41 @@
 
 - (void)cancelInteractiveTransition {
     if (!self.isActive) return;
-    
+	
+	if(self.zoomAnimationScaleFactor > 0.0 && self.zoomAnimationScaleFactor < 1.0) {
+
+		// When a zoom animation transition is also being applied and a transition has been cancelled, must
+		// adjust the frames here as opposed to the completion block of the zoom transition animation or else
+		// flashing will occur.
+		//
+		// Flash fix inspired by  https://github.com/ECSlidingViewController/ECSlidingViewController/pull/323
+		
+		UIViewController *topViewController = [self.transitionContext viewControllerForKey:ECTransitionContextTopViewControllerKey];
+		UIView *topView = topViewController.view;
+		CGRect anchoredFrame = [self.transitionContext initialFrameForViewController:topViewController];
+
+		// Ideally it would be better if we could have access to the current operation off the ECSlidingViewController
+		// here (self.operation == ECSlidingViewControllerOperationAnchorRight), but for now all that matters it whether
+		// or not the current top view's x position is at 0.0. If so, that means the to view in the transition was to
+		// focus the top view in the center and since we're canceling this transition, we need to anchor the top view
+		// back to the right.  Otherwise we need to reset the top view back to the center position.
+		if(floorf(topView.frame.origin.x) == 0.0f) {
+			
+			// transition to close hamburger menu was cancelled, top view needs to go back to the right anchored position
+			// while restoring original zoomed out scale.
+			
+			topView.transform = CGAffineTransformMakeScale(self.zoomAnimationScaleFactor, self.zoomAnimationScaleFactor);
+			topView.frame = anchoredFrame;
+		}
+		else {
+
+			// transition to show hamburger menu cancelled, top view needs to go back to the centered position
+			
+			topView.transform = CGAffineTransformIdentity;
+			topView.frame = anchoredFrame;
+		}
+	}
+	
     [self.transitionContext cancelInteractiveTransition];
     
     CADisplayLink *displayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(reversePausedAnimation:)];

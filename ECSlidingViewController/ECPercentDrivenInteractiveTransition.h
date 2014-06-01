@@ -46,6 +46,12 @@
 @property (nonatomic, assign, readonly) CGFloat percentComplete;
 
 /**
+ If greater than 0.0 and less than 1.0, a zoom animation transition is assumed to be happening, in which case transition 
+	cancellations need to be handled here as opposed to in the zoom animation controller or else flashing will occur.
+ */
+@property (nonatomic, assign) CGFloat zoomAnimationScaleFactor;
+
+/**
  Updates the completion percentage of the transition. In general terms, this method is used to "scrub the playhead" of the animation defined by the `animationController`.
  
  While tracking user events, your code should call this method regularly to update the current progress toward completing the transition. If, during tracking, the interactions cross a threshold that you consider signifies the completion or cancellation of the transition, stop tracking events and call the finishInteractiveTransition or cancelInteractiveTransition method.

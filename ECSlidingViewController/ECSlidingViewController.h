@@ -26,6 +26,7 @@
 #import "ECSlidingConstants.h"
 
 @class ECSlidingViewController;
+@class ECSlidingInteractiveTransition;
 
 /**
  The `ECSlidingViewControllerLayout` protocol is adopted by an object that specifies a custom layout for the child view controllers.
@@ -302,5 +303,10 @@
  The default duration of the view transition.
  */
 @property (nonatomic, assign) NSTimeInterval defaultTransitionDuration;
+
+/**
+ The default interactive transition (used so that the zoom animation scale factor can be optionally set on the interactive transition (flash fix))
+ */
+@property (nonatomic, strong, readonly) ECSlidingInteractiveTransition *defaultInteractiveTransition;
 
 @end
