@@ -572,6 +572,14 @@
 
 - (void)animateOperation:(ECSlidingViewControllerOperation)operation {
     if (![self operationIsValid:operation]){
+
+		// If an animationComplete block exists, invoke it, otherwise it will never be called since animation
+		// is not happening due to invalid operation (e.g., hamburger menu is already focused on the login view / user
+		// profile hamburger menu item and the today widget "Login with OpenTable" cell was tapped and splash screen needs
+		// to be dismissed).
+		if (self.animationComplete) self.animationComplete();
+		self.animationComplete = nil;
+		
         _isInteractive = NO;
         return;
     }
