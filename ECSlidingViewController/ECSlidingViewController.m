@@ -235,7 +235,11 @@
 }
 
 - (id<UIViewControllerTransitionCoordinator>)transitionCoordinator {
-    return self;
+	// see https://github.com/ECSlidingViewController/ECSlidingViewController/issues/363#issuecomment-53067859
+	if (!_transitionInProgress){
+		return nil;
+	}
+	return self;
 }
 
 #pragma mark - Properties
