@@ -235,11 +235,10 @@
 }
 
 - (id<UIViewControllerTransitionCoordinator>)transitionCoordinator {
-	// see https://github.com/ECSlidingViewController/ECSlidingViewController/issues/363#issuecomment-53067859
-	if (!_transitionInProgress){
-		return nil;
-	}
-	return self;
+    if (!self.transitionInProgress){
+        return [super transitionCoordinator];
+    }
+    return self;
 }
 
 #pragma mark - Properties
@@ -759,7 +758,7 @@
         [self.view endEditing:YES];
         _isInteractive = YES;
     }
-	[self.defaultInteractiveTransition updateTopViewHorizontalCenterWithRecognizer:recognizer];
+    [self.defaultInteractiveTransition updateTopViewHorizontalCenterWithRecognizer:recognizer];
     _isInteractive = NO;
 }
 
